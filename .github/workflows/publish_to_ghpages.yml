@@ -19,7 +19,7 @@ jobs:
       run: dotnet publish -c Release -o dist
     - name: Prepare files for push
       run: |
-        cd bin
+        cd dist
         git init
         git add -A
         git config --local user.email "action@github.com"
