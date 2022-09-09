@@ -19,7 +19,7 @@ jobs:
       run: dotnet publish -c Release -o dist
     - name: Prepare files for push
       run: |
-        cd dist
+        cd dist/wwwroot
         git init
         git add -A
         git config --local user.email "action@github.com"
@@ -31,4 +31,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
         force: true
-        directory: ./dist
+        directory: ./dist/wwwroot
