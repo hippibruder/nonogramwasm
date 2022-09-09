@@ -15,5 +15,12 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - name: Build
+      run: dotnet publish -c Release -o bin
     - name: Publish
-      run: dotnet publish
+      run: |
+        cd bin
+        git init
+        git add -A
+        git commit -m 'deploy'
+        git push -f git@github.com:hippibruder/nonogramwasm.git main:gh-pages
