@@ -17,10 +17,18 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build
       run: dotnet publish -c Release -o bin
-    - name: Publish
+    - name: Prepare files for push
       run: |
         cd bin
         git init
         git add -A
-        git commit -m 'deploy'
-        git push -f git@github.com:hippibruder/nonogramwasm.git main:gh-pages
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m 'deploy'        
+    - name: Force push to destination branch
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        force: true
+        directory: ./bin
