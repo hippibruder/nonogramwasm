@@ -15,17 +15,32 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+        
     - name: Build
-      run: dotnet publish -c Release -o dist
-    - name: Prepare files for push
+      run: dotnet publish -c Release -o dist  --nologo  
+    
+    # changes the base-tag in index.html from '/' to 'nonogramwasm' to match GitHub Pages repository subdirectory
+    - name: Change base-tag in index.html from / to nonogramwasm
+      run: sed -i 's/<base href="\/" \/>/<base href="\/nonogramwasm\/" \/>/g' dist/wwwroot/index.html
+    
+    # copy index.html to 404.html to serve the same file when a file is not found
+    - name: copy index.html to 404.html
+      run: cp dist/wwwroot/index.html dist/wwwroot/404.html
+      
+    # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
+    - name: Add .nojekyll file
+      run: touch dist/wwwroot/.nojekyll
+      
+    - name: Prepare repo for push
       run: |
         cd dist/wwwroot
         git init
         git add -A
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git commit -m 'deploy'        
-    - name: Force push to destination branch
+        git commit -m 'deploy'
+        
+    - name: Force push to gh-pages branch
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

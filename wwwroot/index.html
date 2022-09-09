@@ -5,20 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>nonogramwasm</title>
-
-    <!-- Change base href to subfolder if not on localhost. Hack for hosting on github pages. -->
-    <script type="text/javascript">
-        var base = document.createElement('base');
-        var currentUrl = window.location.href;
-        var localHostUrl = 'https://localhost';
-        if (currentUrl.startsWith(localHostUrl)) {
-            base.href = '/';
-        } else {
-            base.href = '/nonogramwasm/';
-        }
-        document.getElementsByTagName('head')[0].appendChild(base);
-    </script>
-
+    <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="nonogramwasm.styles.css" rel="stylesheet" />
