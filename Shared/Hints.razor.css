@@ -1,0 +1,31 @@
+
+.hints {
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+thead .hints {
+    flex-direction: column;
+}
+
+tbody .hints {
+    flex-direction: row;
+    padding-right: .2em;
+}
+
+.hint {
+    cursor: pointer;
+}
+
+thead .hint {
+    min-width: 2em;
+}
+
+tbody .hint {
+    min-width: 1.434em;
+    text-align: right;
+}
+
+.deactivated {
+    color: rgb(117, 117, 117);
+}

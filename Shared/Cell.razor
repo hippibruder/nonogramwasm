@@ -1,0 +1,56 @@
+@using nonogramwasm.Data
+
+<div @onclick="OnCellClicked" @oncontextmenu="OnCellRightClicked" @oncontextmenu:preventDefault="true">
+    @if (DataCell.State == Data.CellState.Revealed && !DataCell.IsEmpty)
+    {
+        <div class="revealed"></div>
+    }
+    else if (DataCell.State == Data.CellState.Revealed && DataCell.IsEmpty)
+    {
+        <div class="empty"></div>
+    }
+    else if (DataCell.State == CellState.Marked)
+    {
+        <div class="block">X</div>
+    }
+    else if (DataCell.State == CellState.RevealedWrong)
+    {
+        <div class="revealed-wrong"></div>
+    }
+    else if (ShowBlocks && !DataCell.IsEmpty)
+    {
+        <div class="block">!</div>
+    }
+    else 
+    {
+        <div class="block"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Data.Cell DataCell { get; set; } = new Data.Cell(isEmpty: true);
+    [Parameter]
+    public EventCallback OnStateChanged { get; set; }
+    [Parameter]
+    public bool ShowBlocks { get; set; } = false;
+
+    async void OnCellClicked(MouseEventArgs mouseEventArts) 
+    {
+        if (DataCell.State == CellState.Marked)
+        {
+           return; 
+        }
+        DataCell.State = DataCell.IsEmpty ? CellState.Revealed : CellState.RevealedWrong;
+        await OnStateChanged.InvokeAsync();
+    }
+    async void OnCellRightClicked(MouseEventArgs mouseEventArts) 
+    {
+        if (DataCell.State != CellState.Hidden && DataCell.State != CellState.Marked )
+        {
+            return;
+        }
+        DataCell.State = DataCell.State == CellState.Hidden ? CellState.Marked : CellState.Hidden;
+        await OnStateChanged.InvokeAsync();
+    }
+}

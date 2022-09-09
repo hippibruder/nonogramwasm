@@ -1,0 +1,48 @@
+@using nonogramwasm.Data
+
+<div class="hints">
+    @for (int i = 0; i < fillerCount; i++)
+    {
+        <div class="hint">&nbsp;</div>
+    }
+    @foreach (var hint in hints)
+    {
+        <div class="hint @CssClass(hint)" @onclick="() => OnHintClicked(hint)" @oncontextmenu="() => OnHintRightClicked(hint)" @oncontextmenu:preventDefault="true">
+            @hint.Count
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Hint[] Data
+    {
+        get { return hints; }
+        set
+        {
+            hints = value;
+            fillerCount = Math.Max(minFillerCount - value.Count(), 0);
+        }
+    }
+
+    Hint[] hints = new Hint[0];
+
+    const int minFillerCount = 3;
+    int fillerCount = minFillerCount;
+
+    void OnHintClicked(Hint hint)
+    {
+        hint.Deactivated = !hint.Deactivated;
+    }
+
+    void OnHintRightClicked(Hint hint)
+    {
+        bool deactivate = hints.Any(h => !h.Deactivated);
+        foreach (var h in hints)
+        {
+            h.Deactivated = deactivate;
+        }
+    }
+
+    string CssClass(Hint hint) => hint.Deactivated ? "deactivated" : "";
+}

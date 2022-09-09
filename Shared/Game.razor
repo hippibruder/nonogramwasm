@@ -1,0 +1,87 @@
+@using nonogramwasm.Data
+
+<div class="settings">
+    <div>Width: <input @bind="width" type="number" /></div>
+    <div>Height: <input @bind="height" type="number" /></div>
+    <button @onclick="StartGame">New Game</button>
+    @if (EnableCheats)
+    {
+        <button @onclick="@grid.RevealGame">Reveal</button>
+    }
+</div>
+
+<table class="table table-sm table-bordered table-dark" id="grid">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            @for (int x = 0; x < grid.Width; x++)
+            {
+                <th scope="col">
+                    <Hints Data="@grid.ColumnHints[x]"></Hints>
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (row, y) in grid.Rows.Select((row, y) => (row, y)))
+        {
+            <tr>
+                <th scope="row">
+                    <Hints Data="@grid.RowHints[y]"></Hints>
+                </th>
+                @foreach (var cell in row)
+                {
+                    <td><Cell DataCell="@cell" OnStateChanged="CheckGameOver" ShowBlocks="EnableCheats"></Cell></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<ul>
+    @foreach (var score in scores)
+    {
+        <li>Duration: @score.GameDuration Errors: @score.RevealedWrongCount</li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public bool EnableCheats { get; set; } = false;
+
+    const int defaultSize = 7;
+    int width = defaultSize;
+    int height = defaultSize;
+    Grid grid = new(0, 0);
+
+    bool isGameOver;
+    DateTime startTime;
+    List<Score> scores = new List<Score>();
+
+    void StartGame() {
+        isGameOver = false;
+        startTime = DateTime.UtcNow;
+        grid = new(height, width);
+    }
+
+    void CheckGameOver() {
+        if (isGameOver)
+        {
+            return;
+        }
+
+        isGameOver = grid.CheckGameOver();
+        if (isGameOver)
+        {
+            var duration = DateTime.UtcNow - startTime;
+            var errors = grid.Cells.Count(c => c.State == CellState.RevealedWrong);
+            scores.Add(new Score(duration, errors));
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        StartGame();
+    }
+}
+
